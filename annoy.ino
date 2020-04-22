@@ -42,8 +42,8 @@ uint32_t preMillis = 0;
 
 void loop() {
     uint32_t currentMillis = millis();
-    
-    if (preMillis - currentMillis > 1000) {
+
+    if (currentMillis - preMillis > 1000) {
         preMillis = currentMillis;
 
         Serial.println(lights.update().binary, BIN);
