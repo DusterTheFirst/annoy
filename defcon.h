@@ -4,22 +4,33 @@
 
 enum DEFCON { Five, Four, Three, Two, One, Cycle, Random };
 
+struct DEFCONLightStruct {
+  bool one : 1;
+  bool two : 1;
+  bool three : 1;
+  bool four : 1;
+  bool five : 1;
+};
+
+union DEFCONLightStatus {
+  DEFCONLightStruct values;
+  uint8_t binary;
+};
+
 class DEFCONLights {
   private:
-    uint8_t one, two, three, four, five;
-
-    uint8_t cycleInc = 1;
+    int8_t cycleInc = 1;
     uint8_t cycleStatus = DEFCON::Five;
 
-    unsigned long preMillis = 0;
-    DEFCON preStatus;
+    DEFCONLightStatus render(DEFCON status);
 
   public:
     DEFCON status;
 
-    DEFCONLights(uint8_t five, uint8_t four, uint8_t three, uint8_t two, uint8_t one);
+    DEFCONLights();
     void setDEFCON(DEFCON status);
-    void update();
+    DEFCONLightStatus update();
+    bool changed();
 };
 
 #endif

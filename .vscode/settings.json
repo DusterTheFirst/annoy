@@ -2,6 +2,14 @@
     "files.associations": {
         "*.sxcu": "json",
         "iosfwd": "cpp",
-        "xlocbuf": "cpp"
-    }
+        "xlocbuf": "cpp",
+        "functional": "cpp",
+        "list": "cpp",
+        "memory": "cpp",
+        "type_traits": "cpp",
+        "xmemory": "cpp",
+        "xstring": "cpp",
+        "random": "cpp"
+    },
+    "C_Cpp.intelliSenseEngine": "Default"
 }

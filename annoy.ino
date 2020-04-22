@@ -1,6 +1,6 @@
 #include "defcon.h"
 
-DEFCONLights lights(D8, D7, D6, D5, D4);
+DEFCONLights lights;
 
 void ICACHE_RAM_ATTR IncDEFCON();
 
@@ -38,4 +38,14 @@ void IncDEFCON() {
     }
 }
 
-void loop() { lights.update(); }
+uint32_t preMillis = 0;
+
+void loop() {
+    uint32_t currentMillis = millis();
+    
+    if (preMillis - currentMillis > 1000) {
+        preMillis = currentMillis;
+
+        Serial.println(lights.update().binary, BIN);
+    }
+}
