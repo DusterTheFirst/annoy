@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "*.sxcu": "json",
+        "iosfwd": "cpp",
+        "xlocbuf": "cpp"
+    }
+}
