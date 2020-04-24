@@ -9,7 +9,13 @@
         "type_traits": "cpp",
         "xmemory": "cpp",
         "xstring": "cpp",
-        "random": "cpp"
+        "random": "cpp",
+        "*.html.h": "html",
+        "array": "cpp",
+        "vector": "cpp",
+        "xutility": "cpp",
+        "string": "cpp"
     },
-    "C_Cpp.intelliSenseEngine": "Default"
+    "C_Cpp.intelliSenseEngine": "Default",
+    "C_Cpp.errorSquiggles": "Disabled"
 }

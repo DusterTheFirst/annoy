@@ -25,6 +25,7 @@ DEFCONLightStatus DEFCONLights::update() {
                  .four = (bool)(random(0, 2)),
                  .five = (bool)(random(0, 2))}};
     } else {
+        // Normal render for other statuses
         return this->render(this->status);
     }
 }
@@ -53,5 +54,6 @@ DEFCONLightStatus DEFCONLights::render(DEFCON status) {
         break;
     }
 
+    // Wrap the result in the union
     return {lights};
 }
