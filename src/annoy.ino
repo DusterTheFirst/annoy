@@ -4,13 +4,12 @@
 #include <ESP8266WiFi.h>
 #include <ESP8266mDNS.h>
 
-#ifndef STASSID
-#define STASSID "Diagon Alley"
-#define STAPSK "Gringotts"
-#endif
+const char *ssid = "Diagon Alley";
+const char *password = "Gringotts";
 
-const char *ssid = STASSID;
-const char *password = STAPSK;
+const char *key =
+#include "key.h"
+    ;
 
 DEFCONLights lights;
 RGB rgb(D8, D6, D5);
@@ -66,6 +65,10 @@ void setup() {
 
     // Start the server
     server.begin();
+
+    Serial.print("Server started with secret key '");
+    Serial.print(key);
+    Serial.print("'");
 }
 
 uint32_t preDebounceMillis = 0;
