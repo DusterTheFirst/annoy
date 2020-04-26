@@ -82,8 +82,6 @@ void buttonPush() {
 
 uint32_t preMillis = 0;
 
-byte cum = 0;
-
 void loop() {
     if (lastAction != 0 && millis() - lastAction > 60 * 1000) {
         lastAction = 0;
