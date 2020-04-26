@@ -1,5 +1,5 @@
-#include "web.h"
 #include "lights.h"
+#include "web.h"
 #include <ESP8266WiFi.h>
 #include <ESP8266mDNS.h>
 
@@ -22,6 +22,8 @@ void setup() {
     // Shift out latch
     pinMode(D7, OUTPUT);
 
+    rgb.set(255, 0, 0);
+
     // Setup wifi as station (client)
     WiFi.mode(WIFI_STA);
     // Connect to wifi
@@ -37,6 +39,7 @@ void setup() {
         digitalWrite(D7, HIGH);
     }
     defconLights.setDEFCON(DEFCON::Five);
+    rgb.set(255, 165, 0);
 
     // Print out IP address
     Serial.print("Connected, IP address: ");
@@ -51,7 +54,11 @@ void setup() {
 
     // Setup server routing
     server.on("/", handleRoot);
+    server.on("/scripts.js", handleScripts);
+    server.on("/styles.css", handleStyles);
+
     server.on("/act", handleAction);
+    server.on("/button", handleButton);
 
     // Setup error handling
     server.onNotFound(handleNotFound);
@@ -63,44 +70,14 @@ void setup() {
     Serial.print("Server started with secret key '");
     Serial.print(key);
     Serial.print("'");
+
+    rgb.set(0, 0, 0);
 }
 
-uint32_t preDebounceMillis = 0;
-
 void buttonPush() {
-    uint32_t currentMillis = millis();
-
-    if (currentMillis - preDebounceMillis > 200) {
-        preDebounceMillis = currentMillis;
-
-        Serial.println("tog");
-
-        switch (defconLights.status) {
-        case DEFCON::Five:
-            defconLights.setDEFCON(DEFCON::Four);
-            break;
-        case DEFCON::Four:
-            defconLights.setDEFCON(DEFCON::Three);
-            break;
-        case DEFCON::Three:
-            defconLights.setDEFCON(DEFCON::Two);
-            break;
-        case DEFCON::Two:
-            defconLights.setDEFCON(DEFCON::One);
-            break;
-        case DEFCON::One:
-            defconLights.setDEFCON(DEFCON::Cycle);
-            break;
-        case DEFCON::Cycle:
-            defconLights.setDEFCON(DEFCON::Random);
-            break;
-        case DEFCON::Random:
-            defconLights.setDEFCON(DEFCON::Five);
-            break;
-        default:
-            break;
-        }
-    }
+    buttonPressed = true;
+    cachedState = defconLights.status;
+    defconLights.setDEFCON(DEFCON::Random);
 }
 
 uint32_t preMillis = 0;
@@ -108,6 +85,12 @@ uint32_t preMillis = 0;
 byte cum = 0;
 
 void loop() {
+    if (lastAction != 0 && millis() - lastAction > 60 * 1000) {
+        lastAction = 0;
+        lastRgb = 0;
+        lastDefcon = 0;
+    }
+
     uint32_t currentMillis = millis();
 
     if (currentMillis - preMillis > 100) {

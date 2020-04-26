@@ -6,7 +6,17 @@ base64 encoder;
 
 // Load the root html page from the file
 const char *rootHTML =
-#include "html/index.html.h"
+#include "web/index.html.h"
+    ;
+
+// Load the scripts
+const char *scripts =
+#include "web/scripts.js.h"
+    ;
+
+// Load the styles
+const char *styles =
+#include "web/styles.css.h"
     ;
 
 void handleNotFound() {
@@ -44,17 +54,40 @@ void handleRoot() {
     }
 }
 
+void handleStyles() { server.send(200, "text/css", styles); }
+void handleScripts() { server.send(200, "text/javascript", scripts); }
+
+long lastDefcon = 0;
+long lastRgb = 0;
+unsigned long lastAction = 0;
+
 void handleAction() {
     if (is_auth()) {
+        lastAction = millis();
+
         Serial.println("Args: " + server.args());
         for (uint8_t i = 0; i < server.args(); i++) {
             Serial.println(" " + server.argName(i) + ": " + server.arg(i));
         }
 
         if (server.hasArg("rgb")) {
-            rgb.set(server.arg("rgb"));
+            long currRgb = server.arg("created").toInt();
+            Serial.println(currRgb);
+            Serial.println(lastRgb);
+            // Ignore out of order req
+            if (currRgb > lastRgb) {
+                lastRgb = currRgb;
+                rgb.set(server.arg("rgb"));
+            }
         } else if (server.hasArg("defcon")) {
-            defconLights.setDEFCON((DEFCON)server.arg("defcon").toInt());
+            long currDefcon = server.arg("created").toInt();
+            Serial.println(currDefcon);
+            Serial.println(lastDefcon);
+            // Ignore out of order req
+            if (currDefcon > lastDefcon) {
+                lastDefcon = currDefcon;
+                defconLights.setDEFCON((DEFCON)server.arg("defcon").toInt());
+            }
         } else if (server.hasArg("strobe")) {
             whiteStrobe.on();
         } else if (server.hasArg("blueStrobe")) {
@@ -68,4 +101,13 @@ void handleAction() {
             R"(Basic realm="Access to the annoyinator 9001!!!", charset="UTF-8")");
         server.send(401, "text/plain", "You must login to access this website");
     }
+}
+
+bool buttonPressed = false;
+DEFCON cachedState;
+
+void handleButton() {
+    server.send(200, "text/plain", buttonPressed ? "yes" : "no");
+    buttonPressed = false;
+    defconLights.setDEFCON(cachedState);
 }
