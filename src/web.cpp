@@ -107,7 +107,11 @@ bool buttonPressed = false;
 DEFCON cachedState;
 
 void handleButton() {
-    server.send(200, "text/plain", buttonPressed ? "yes" : "no");
-    buttonPressed = false;
-    defconLights.setDEFCON(cachedState);
+    if (buttonPressed) {
+        server.send(200, "text/plain", "yes");
+        buttonPressed = false;
+        defconLights.setDEFCON(cachedState);
+    } else {
+        server.send(200, "text/plain", "no");
+    }
 }
