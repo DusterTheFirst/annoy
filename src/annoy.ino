@@ -1,16 +1,12 @@
-#include "RGB.h"
-#include "defcon.h"
 #include "web.h"
+#include "lights.h"
 #include <ESP8266WiFi.h>
 #include <ESP8266mDNS.h>
 
 const char *ssid = "Diagon Alley";
 const char *password = "Gringotts";
 
-DEFCONLights lights;
-RGB rgb(D8, D6, D5);
-
-void ICACHE_RAM_ATTR IncDEFCON();
+void ICACHE_RAM_ATTR buttonPush();
 
 void setup() {
     // Begin serial transmission
@@ -18,7 +14,7 @@ void setup() {
 
     // Setup interrupt button
     pinMode(D1, INPUT);
-    attachInterrupt(digitalPinToInterrupt(D1), IncDEFCON, RISING);
+    attachInterrupt(digitalPinToInterrupt(D1), buttonPush, RISING);
 
     // Shift out pins
     pinMode(D2, OUTPUT);
@@ -37,10 +33,10 @@ void setup() {
         delay(200);
 
         digitalWrite(D7, LOW);
-        shiftOut(D4, D2, LSBFIRST, ~lights.update().binary);
+        shiftOut(D4, D2, LSBFIRST, ~defconLights.update().binary);
         digitalWrite(D7, HIGH);
     }
-    lights.setDEFCON(DEFCON::Five);
+    defconLights.setDEFCON(DEFCON::Five);
 
     // Print out IP address
     Serial.print("Connected, IP address: ");
@@ -71,7 +67,7 @@ void setup() {
 
 uint32_t preDebounceMillis = 0;
 
-void IncDEFCON() {
+void buttonPush() {
     uint32_t currentMillis = millis();
 
     if (currentMillis - preDebounceMillis > 200) {
@@ -79,27 +75,27 @@ void IncDEFCON() {
 
         Serial.println("tog");
 
-        switch (lights.status) {
+        switch (defconLights.status) {
         case DEFCON::Five:
-            lights.setDEFCON(DEFCON::Four);
+            defconLights.setDEFCON(DEFCON::Four);
             break;
         case DEFCON::Four:
-            lights.setDEFCON(DEFCON::Three);
+            defconLights.setDEFCON(DEFCON::Three);
             break;
         case DEFCON::Three:
-            lights.setDEFCON(DEFCON::Two);
+            defconLights.setDEFCON(DEFCON::Two);
             break;
         case DEFCON::Two:
-            lights.setDEFCON(DEFCON::One);
+            defconLights.setDEFCON(DEFCON::One);
             break;
         case DEFCON::One:
-            lights.setDEFCON(DEFCON::Cycle);
+            defconLights.setDEFCON(DEFCON::Cycle);
             break;
         case DEFCON::Cycle:
-            lights.setDEFCON(DEFCON::Random);
+            defconLights.setDEFCON(DEFCON::Random);
             break;
         case DEFCON::Random:
-            lights.setDEFCON(DEFCON::Five);
+            defconLights.setDEFCON(DEFCON::Five);
             break;
         default:
             break;
@@ -119,13 +115,9 @@ void loop() {
 
         byte data = 0b00000000;
 
-        data |= 0b00011111 & ~lights.update().binary;
-
-        cum++;
-
-        data |= (0b00000111 & cum) << 5;
-
-        rgb.set(random(0, 255), random(0, 255), random(0, 255));
+        data |= 0b00011111 & ~defconLights.update().binary;
+        data |= (0b01100000 & ~whiteStrobe.update());
+        data |= (0b10000000 & ~blueStrobe.update());
 
         digitalWrite(D7, LOW);
         shiftOut(D4, D2, LSBFIRST, data);

@@ -1,19 +1,27 @@
 #pragma once
 #include <Arduino.h>
 
-enum DEFCON { Five, Four, Three, Two, One, Cycle, Random };
+enum DEFCON {
+    Five = 5,
+    Four = 4,
+    Three = 3,
+    Two = 2,
+    One = 1,
+    Cycle = 0,
+    Random = 6
+};
 
 struct DEFCONLightStruct {
-  bool one : 1;
-  bool two : 1;
-  bool three : 1;
-  bool four : 1;
-  bool five : 1;
+    bool one : 1;
+    bool two : 1;
+    bool three : 1;
+    bool four : 1;
+    bool five : 1;
 };
 
 union DEFCONLightStatus {
-  DEFCONLightStruct values;
-  uint8_t binary;
+    DEFCONLightStruct values;
+    uint8_t binary;
 };
 
 class DEFCONLights {

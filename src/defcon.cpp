@@ -7,9 +7,9 @@ DEFCONLightStatus DEFCONLights::update() {
     // Custom status handlers
     if (this->status == DEFCON::Cycle) {
         // Reverse direction if on a boundary
-        if (this->cycleStatus >= DEFCON::One) {
+        if (this->cycleStatus >= DEFCON::Five) {
             this->cycleInc = -1;
-        } else if (this->cycleStatus <= DEFCON::Five) {
+        } else if (this->cycleStatus <= DEFCON::One) {
             this->cycleInc = 1;
         }
 

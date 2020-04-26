@@ -1,4 +1,5 @@
 #include "web.h"
+#include "lights.h"
 
 ESP8266WebServer server(80);
 base64 encoder;
@@ -26,10 +27,8 @@ void handleNotFound() {
 // Check if header is present and correct
 bool is_auth() {
     if (server.hasHeader("Authorization")) {
-        String encodedKey = encoder.encode(String(key), false);
-        String auth = server.header("Authorization").substring(6);
-
-        return auth == encodedKey;
+        return server.header("Authorization").substring(6) ==
+               encoder.encode(String(key), false);
     }
     return false;
 }
@@ -47,10 +46,21 @@ void handleRoot() {
 
 void handleAction() {
     if (is_auth()) {
-        Serial.println(server.args());
+        Serial.println("Args: " + server.args());
         for (uint8_t i = 0; i < server.args(); i++) {
             Serial.println(" " + server.argName(i) + ": " + server.arg(i));
         }
+
+        if (server.hasArg("rgb")) {
+            rgb.set(server.arg("rgb"));
+        } else if (server.hasArg("defcon")) {
+            defconLights.setDEFCON((DEFCON)server.arg("defcon").toInt());
+        } else if (server.hasArg("strobe")) {
+            whiteStrobe.on();
+        } else if (server.hasArg("blueStrobe")) {
+            blueStrobe.on();
+        }
+
         server.send(200, "text/plain", "hi");
     } else {
         server.sendHeader(
