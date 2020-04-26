@@ -7,10 +7,6 @@
 const char *ssid = "Diagon Alley";
 const char *password = "Gringotts";
 
-const char *key =
-#include "key.h"
-    ;
-
 DEFCONLights lights;
 RGB rgb(D8, D6, D5);
 
@@ -59,6 +55,7 @@ void setup() {
 
     // Setup server routing
     server.on("/", handleRoot);
+    server.on("/act", handleAction);
 
     // Setup error handling
     server.onNotFound(handleNotFound);
@@ -66,6 +63,7 @@ void setup() {
     // Start the server
     server.begin();
 
+    // Auth key
     Serial.print("Server started with secret key '");
     Serial.print(key);
     Serial.print("'");

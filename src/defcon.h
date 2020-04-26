@@ -1,5 +1,4 @@
-#ifndef DEFCON_h
-#define DEFCON_h
+#pragma once
 #include <Arduino.h>
 
 enum DEFCON { Five, Four, Three, Two, One, Cycle, Random };
@@ -32,5 +31,3 @@ class DEFCONLights {
     DEFCONLightStatus update();
     bool changed();
 };
-
-#endif

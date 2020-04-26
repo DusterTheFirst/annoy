@@ -1,30 +1,19 @@
 #ifndef WEB_h
 #define WEB_h
+#include "key.h"
 #include <Arduino.h>
 #include <ESP8266WebServer.h>
+#include <libb64/cdecode.h>
+#include <base64.h>
 
-ESP8266WebServer server(80);
+extern ESP8266WebServer server;
 
 // Load the root html page from the file
-const char *rootHTML =
-#include "html/index.html.h"
-    ;
+extern const char *rootHTML;
 
-void handleNotFound() {
-    String message = "File Not Found\n\n";
-    message += "URI: ";
-    message += server.uri();
-    message += "\nMethod: ";
-    message += (server.method() == HTTP_GET) ? "GET" : "POST";
-    message += "\nArguments: ";
-    message += server.args();
-    message += "\n";
-    for (uint8_t i = 0; i < server.args(); i++) {
-        message += " " + server.argName(i) + ": " + server.arg(i) + "\n";
-    }
-    server.send(404, "text/plain", message);
-}
-
-void handleRoot() { server.send(200, "text/html", rootHTML); }
+void handleNotFound();
+bool is_auth();
+void handleRoot();
+void handleAction();
 
 #endif
