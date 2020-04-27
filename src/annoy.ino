@@ -75,9 +75,11 @@ void setup() {
 }
 
 void buttonPush() {
-    buttonPressed = true;
-    cachedState = defconLights.status;
-    defconLights.setDEFCON(DEFCON::Random);
+    if (!buttonPressed) {
+        buttonPressed = true;
+        cachedState = defconLights.status;
+        defconLights.setDEFCON(DEFCON::Random);
+    }
 }
 
 uint32_t preMillis = 0;
