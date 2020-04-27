@@ -105,6 +105,10 @@ void loop() {
         digitalWrite(D7, HIGH);
     }
 
+    if (WiFi.status() != WL_CONNECTED) {
+        setup();
+    }
+
     // Handle http clients
     server.handleClient();
     // Update Multicast DNS
