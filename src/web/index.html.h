@@ -10,13 +10,13 @@ R"HTML(
     </head>
     <body>
         <div class="alert" hidden>Zach has responded to your message! Click to dismiss</div>
-        <label>
+        <label class="rgb">
             RGB LED Color:
-            <input type="color" id="rgb-led-color" />
+            <input type="color" />
         </label>
-        <label>
-            DEFCON Level: <span id="DEFCONLabel">5</span>
-            <input type="range" min="1" max="5" value="5" id="DEFCONLevel" />
+        <label class="defcon">
+            DEFCON Level: <span>5</span>
+            <input type="range" min="1" max="5" value="5" />
         </label>
 
         <button id="strobe">Strobe</button>

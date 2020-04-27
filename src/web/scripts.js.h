@@ -8,7 +8,7 @@ async function fetchAndResend(uri, created = (window.performance.timing.navigati
 
 window.onload = async () => {
     // Setup RGB Led
-    const rgbLed = document.getElementById("rgb-led-color");
+    const rgbLed = document.querySelector(".rgb input");
     const updateRgbLed = async () => {
         await fetchAndResend(`/act?rgb=${rgbLed.value.substring(1)}`);
     };
@@ -16,9 +16,17 @@ window.onload = async () => {
     await updateRgbLed();
 
     // Setup defcon
-    const defconLabel = document.getElementById("DEFCONLabel");
-    const defconLevel = document.getElementById("DEFCONLevel");
+    const defconContainer = document.querySelector(".defcon");
+    const defconLabel = defconContainer.querySelector("span");
+    const defconLevel = defconContainer.querySelector("input");
     const defconUpdate = async () => {
+        defconContainer.style.backgroundColor = {
+            "1": "#fe0000",
+            "2": "#800000",
+            "3": "#808000",
+            "4": "#80fe00",
+            "5": "#00fe00"
+        }[defconLevel.value];
         defconLabel.innerText = defconLevel.value;
         await fetchAndResend(`/act?defcon=${defconLevel.value}`);
     };
@@ -35,6 +43,7 @@ window.onload = async () => {
         await fetchAndResend("/act?blueStrobe=true");
     }
 
+    // Setup alert
     document.querySelector(".alert").addEventListener("click", () => {
         document.querySelector(".alert").setAttribute("hidden", "true");
     });
@@ -45,4 +54,4 @@ window.onload = async () => {
         }
     }, 10000);
 };
-)JS"
+// )JS"
