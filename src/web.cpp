@@ -65,15 +65,8 @@ void handleAction() {
     if (is_auth()) {
         lastAction = millis();
 
-        Serial.println("Args: " + server.args());
-        for (uint8_t i = 0; i < server.args(); i++) {
-            Serial.println(" " + server.argName(i) + ": " + server.arg(i));
-        }
-
         if (server.hasArg("rgb")) {
             long currRgb = server.arg("created").toInt();
-            Serial.println(currRgb);
-            Serial.println(lastRgb);
             // Ignore out of order req
             if (currRgb > lastRgb) {
                 lastRgb = currRgb;
@@ -81,8 +74,6 @@ void handleAction() {
             }
         } else if (server.hasArg("defcon")) {
             long currDefcon = server.arg("created").toInt();
-            Serial.println(currDefcon);
-            Serial.println(lastDefcon);
             // Ignore out of order req
             if (currDefcon > lastDefcon) {
                 lastDefcon = currDefcon;
